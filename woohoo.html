@@ -37,6 +37,8 @@
         <td data-col="role">{{role}}</td>
         <td>{{formatdate joindate}}</td>
       </tr>
+      {{else}}
+      <tr><td colspan="4">No q'ers :(</td></tr>
     {{/each}}
     </tbody>
   </table>

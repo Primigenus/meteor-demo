@@ -39,7 +39,7 @@ if (Meteor.isClient) {
 
   Template.qers.helpers({
     formatdate: function(date) {
-      return moment(date, "YYYY-MM-DD").fromNow();
+      return moment(date).fromNow();
     },
     bgc: function(plusones) {
       var max = Qers.findOne({}, {sort: {plusones: -1}}).plusones;
@@ -77,6 +77,28 @@ if (Meteor.isServer) {
         }
       }
     });
+
+    Meteor.methods({
+      addInitialQers: function() {
+        var qers = [
+          {name: "Chris", role: "Planningslaag", joindate: new Date("2005-04-01")},
+          {name: "Christiaan", role: "Programmeur", joindate: new Date("2008-09-01")},
+          {name: "Elaine", role: "Interaction Engineer", joindate: new Date("2009-09-01")},
+          {name: "Jelle", role: "Gameguru", joindate: new Date("2008-08-01")},
+          {name: "Johan", role: "Interaction Engineer", joindate: new Date("2010-01-01")},
+          {name: "Kars", role: "Founder", joindate: new Date("2000-05-01")},
+          {name: "Martin", role: "Crazy inventor", joindate: new Date("2001-04-01")},
+          {name: "Rahul", role: "Captain Longhair", joindate: new Date("2006-04-01")},
+          {name: "Richard", role: "Illustrator", joindate: new Date("2011-11-01")},
+          {name: "Sjoerd", role: "Sjoogle", joindate: new Date("2001-08-01")},
+          {name: "Lukas", role: "Captain Healthy", joindate: new Date("2005-02-01")}
+        ];
+        _.each(qers, function(item) {
+          item.plusones = 0;
+          Qers.insert(item);
+        });
+      }
+    })
 
   });
 }
