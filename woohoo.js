@@ -15,7 +15,7 @@ if (Meteor.isClient) {
   };
 
   Template.qers.isMe = function() {
-    return this.name.toLowerCase() === Meteor.user().profile.name.split(" ")[0].toLowerCase();
+    return this.name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
   }
 
   Template.qers.sort = function() {
@@ -24,7 +24,7 @@ if (Meteor.isClient) {
 
   Template.qers.events = {
     'click .button': function() {
-      Qers.update(this._id, {$inc: {plusones: 1}});
+      Meteor.call("plusone", this._id);
     },
     'click thead th': function(evt) {
       Session.set("sortby", evt.target.getAttribute("data-sortby"));
@@ -79,24 +79,31 @@ if (Meteor.isServer) {
     });
 
     Meteor.methods({
-      addInitialQers: function() {
-        if (Qers.find().count() > 0) return;
+      plusone: function(id) {
+        var record = Qers.findOne(id);
+        if (_.contains(record.voters, Meteor.user()._id))
+          return;
+        Qers.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}});
+      },
+      reset: function() {
+        Qers.remove({});
 
         var qers = [
-          {name: "Chris", role: "Planningslaag", joindate: new Date("2005-04-01")},
-          {name: "Christiaan", role: "Programmeur", joindate: new Date("2008-09-01")},
-          {name: "Elaine", role: "Interaction Engineer", joindate: new Date("2009-09-01")},
-          {name: "Jelle", role: "Gameguru", joindate: new Date("2008-08-01")},
-          {name: "Johan", role: "Interaction Engineer", joindate: new Date("2010-01-01")},
-          {name: "Kars", role: "Founder", joindate: new Date("2000-05-01")},
-          {name: "Martin", role: "Crazy inventor", joindate: new Date("2001-04-01")},
-          {name: "Rahul", role: "Captain Longhair", joindate: new Date("2006-04-01")},
-          {name: "Richard", role: "Illustrator", joindate: new Date("2011-11-01")},
-          {name: "Sjoerd", role: "Sjoogle", joindate: new Date("2001-08-01")},
-          {name: "Lukas", role: "Captain Healthy", joindate: new Date("2005-02-01")}
+          {name: "Chris Waalberg", role: "Planningslaag", joindate: new Date("2005-04-01")},
+          {name: "Christiaan Hees", role: "Programmeur", joindate: new Date("2008-09-01")},
+          {name: "Elaine Oliver", role: "Interaction Engineer", joindate: new Date("2009-09-01")},
+          {name: "Jelle Joling", role: "Gameguru", joindate: new Date("2008-08-01")},
+          {name: "Johan Huijkman", role: "Interaction Engineer", joindate: new Date("2010-01-01")},
+          {name: "Kars Failing", role: "Founder", joindate: new Date("2000-05-01")},
+          {name: "Martin Kool", role: "Crazy inventor", joindate: new Date("2001-04-01")},
+          {name: "Rahul Choudhury", role: "Captain Longhair", joindate: new Date("2006-04-01")},
+          {name: "Richard Lems", role: "Illustrator", joindate: new Date("2011-11-01")},
+          {name: "Sjoerd Visscher", role: "Sjoogle", joindate: new Date("2001-08-01")},
+          {name: "Lukas van Driel", role: "Captain Healthy", joindate: new Date("2005-02-01")}
         ];
         _.each(qers, function(item) {
           item.plusones = 0;
+          item.voters = [];
           Qers.insert(item);
         });
       }
