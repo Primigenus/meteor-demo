@@ -1,0 +1,43 @@
+<head>
+  <title>Meteor bedenktijdje</title>
+</head>
+
+<body>
+  {{> qers}}
+</body>
+
+<template name="qers">
+  <h1>Q'ers</h1>
+  <div class="login">{{loginButtons}}</div>
+
+  <table class="sortby-{{sort}}">
+    <thead>
+      <tr>
+        <th data-sortby="plusones">+1 {{{sortby 'plusones'}}}</th>
+        <th data-sortby="name">Naam {{{sortby 'name'}}}</th>
+        <th data-sortby="role">Rol {{{sortby 'role'}}}</th>
+        <th data-sortby="joindate">Gestart {{{sortby 'joindate'}}}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{#each qers}}
+      <tr style="{{bgc plusones}}">
+        <td class="plusones">
+          {{#if currentUser}}
+            {{#unless isMe}}
+              <a href="#" class="button">+{{plusones}}</a>
+              {{else}}
+                +{{plusones}}
+            {{/unless}}
+            {{else}}
+              +{{plusones}}
+          {{/if}}
+        </td>
+        <th data-col="name">{{name}}</th>
+        <td data-col="role">{{role}}</td>
+        <td>{{formatdate joindate}}</td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>

@@ -1,0 +1,39 @@
+/* CSS declarations go here */
+
+body {
+  position: relative;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  width: 60%;
+  margin: 0 auto;
+}
+
+table {
+  width: 100%;
+  border: solid 5px #ccc;
+}
+
+a {
+  text-decoration: none;
+}
+
+thead th { background-color: #eee; cursor: pointer; -webkit-user-select: none;}
+thead th:hover { background-color: #fff;}
+
+tbody th { text-align: left;}
+
+tbody tr:hover th, tbody tr:hover td { background-color: #ffc;}
+
+th, td { padding: 10px;}
+
+.login {position: absolute; top: 0; right: 0;}
+
+.plusones { text-align: right;}
+
+td a { display: block; -webkit-user-select: none;}
+
+.sortby-plusones thead th:nth-child(1),
+.sortby-name thead th:nth-child(2),
+.sortby-role thead th:nth-child(3),
+.sortby-joindate thead th:nth-child(4)
+{ background: #ddd;}
