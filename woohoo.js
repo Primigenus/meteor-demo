@@ -80,6 +80,8 @@ if (Meteor.isServer) {
 
     Meteor.methods({
       addInitialQers: function() {
+        if (Qers.find().count() > 0) return;
+
         var qers = [
           {name: "Chris", role: "Planningslaag", joindate: new Date("2005-04-01")},
           {name: "Christiaan", role: "Programmeur", joindate: new Date("2008-09-01")},
