@@ -15,6 +15,7 @@ if (Meteor.isClient) {
   };
 
   Template.qers.isMe = function() {
+    if (!this.name) return false;
     return this.name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
   }
 
@@ -22,9 +23,16 @@ if (Meteor.isClient) {
     return Session.get("sortby");
   }
 
+  Template.qers.selected = function() {
+    return Session.equals("selected", this._id) ? "selected" : "";
+  }
+
   Template.qers.events = {
     'click .button': function() {
       Meteor.call("plusone", this._id);
+    },
+    'click tbody tr': function() {
+      Session.set('selected', this._id);
     },
     'click thead th': function(evt) {
       Session.set("sortby", evt.target.getAttribute("data-sortby"));
@@ -33,8 +41,11 @@ if (Meteor.isClient) {
   }
 
   Template.qers.sortby = function(col) {
-    return Session.equals("sortby", col)
-      && Session.equals("sortdir", 1) ? "&uarr;" : "&darr;";
+    if (Session.equals("sortby", col) && Session.equals("sortdir", 1))
+      return "&uarr;"
+    else if (Session.equals("sortby", col) && Session.equals("sortdir", -1))
+      return "&darr;";
+    else return "";
   }
 
   Template.qers.helpers({
@@ -59,7 +70,7 @@ if (Meteor.isServer) {
       insert: function() { return true; },
       update: function(userId, docs, fields, modifier) {
         // only allow updates that increment plusones by 1
-        var isMe = docs[0].name.toLowerCase() === Meteor.user().profile.name.split(" ")[0].toLowerCase();
+        var isMe = docs[0].name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
         var isPlusOne = _.keys(modifier).length == 1 && modifier["$inc"] && modifier["$inc"].plusones == 1;
         return isPlusOne && !isMe;
       }
@@ -89,7 +100,7 @@ if (Meteor.isServer) {
         Qers.remove({});
 
         var qers = [
-          {name: "Chris Waalberg", role: "Planningslaag", joindate: new Date("2005-04-01")},
+          {name: "Chris Waalberg", role: "Planningslaaf", joindate: new Date("2005-04-01")},
           {name: "Christiaan Hees", role: "Programmeur", joindate: new Date("2008-09-01")},
           {name: "Elaine Oliver", role: "Interaction Engineer", joindate: new Date("2009-09-01")},
           {name: "Jelle Visser", role: "Gameguru", joindate: new Date("2008-08-01")},
