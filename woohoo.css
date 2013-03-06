@@ -5,7 +5,7 @@ body {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 24px;
   width: 60%;
-  margin: 0 auto;
+  margin: 0 auto 100px auto;
 }
 
 table {
@@ -30,7 +30,23 @@ th, td { padding: 10px;}
 
 .plusones { text-align: right;}
 
-td a { display: block; -webkit-user-select: none;}
+td a {
+  display: block;
+  -webkit-user-select: none;
+  border-radius: 10px;
+  border: solid 1px #ccc;
+  background: #ccc -webkit-linear-gradient(top, #eee, #ccc);
+  color: #666;
+  padding: 3px 6px;
+  text-align: center;
+}
+td a:hover {
+  border-color: #666;
+  background: #ccc -webkit-linear-gradient(top, #ccc, #999);
+}
+td a:active {
+  background: #ccc -webkit-linear-gradient(bottom, #ccc, #999);
+}
 
 .sortby-plusones thead th:nth-child(1),
 .sortby-name thead th:nth-child(2),

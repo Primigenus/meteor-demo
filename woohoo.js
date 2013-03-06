@@ -1,33 +1,37 @@
-var Qers = new Meteor.Collection("qers");
+var Students = new Meteor.Collection("students");
 
 if (Meteor.isClient) {
   Meteor.startup(function() {
-    Session.set("sortby", "name");
-    Session.set("sortdir", 1);
+    Session.setDefault("sortby", "name");
+    Session.setDefault("sortdir", 1);
   });
 
-  Template.qers.qers = function () {
+  Template.students.students = function () {
     var sortby = Session.get("sortby");
     var sortdir = Session.get("sortdir");
     var sort = {};
     sort[sortby] = sortdir;
-    return Qers.find({}, {sort: sort});
+    return Students.find({}, {sort: sort});
   };
 
-  Template.qers.isMe = function() {
+  Template.students.isMe = function() {
     if (!this.name) return false;
     return this.name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
   }
 
-  Template.qers.sort = function() {
+  Template.students.sort = function() {
     return Session.get("sortby");
   }
 
-  Template.qers.selected = function() {
+  Template.students.joindate = function() {
+    return moment(this.joindate).fromNow();
+  }
+
+  Template.students.selected = function() {
     return Session.equals("selected", this._id) ? "selected" : "";
   }
 
-  Template.qers.events = {
+  Template.students.events = {
     'click .button': function() {
       Meteor.call("plusone", this._id);
     },
@@ -40,7 +44,7 @@ if (Meteor.isClient) {
     }
   }
 
-  Template.qers.sortby = function(col) {
+  Template.students.sortby = function(col) {
     if (Session.equals("sortby", col) && Session.equals("sortdir", 1))
       return "&uarr;"
     else if (Session.equals("sortby", col) && Session.equals("sortdir", -1))
@@ -48,12 +52,9 @@ if (Meteor.isClient) {
     else return "";
   }
 
-  Template.qers.helpers({
-    formatdate: function(date) {
-      return moment(date).fromNow();
-    },
+  Template.students.helpers({
     bgc: function(plusones) {
-      var max = Qers.findOne({}, {sort: {plusones: -1}}).plusones;
+      var max = Students.findOne({}, {sort: {plusones: -1}}).plusones;
       max = max || 1;
       plusones = plusones || 0;
       var n = ~~(plusones / max * 100 + 155);
@@ -66,7 +67,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
 
-    Qers.allow({
+    Students.allow({
       insert: function() { return true; },
       update: function(userId, docs, fields, modifier) {
         // only allow updates that increment plusones by 1
@@ -76,7 +77,7 @@ if (Meteor.isServer) {
       }
     });
 
-    Qers.find({}).observe({
+    Students.find({}).observe({
       changed: function(newDoc, atIndex, oldDoc) {
         if (newDoc.plusones >= 42 && oldDoc.plusones < 42) {
           Email.send({
@@ -91,31 +92,43 @@ if (Meteor.isServer) {
 
     Meteor.methods({
       plusone: function(id) {
-        var record = Qers.findOne(id);
+        var record = Students.findOne(id);
         if (_.contains(record.voters, Meteor.user()._id))
           return;
-        Qers.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}});
+        Students.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}});
       },
       reset: function() {
-        Qers.remove({});
+        Students.remove({});
 
-        var qers = [
-          {name: "Chris Waalberg", role: "Planningslaaf", joindate: new Date("2005-04-01")},
-          {name: "Christiaan Hees", role: "Programmeur", joindate: new Date("2008-09-01")},
-          {name: "Elaine Oliver", role: "Interaction Engineer", joindate: new Date("2009-09-01")},
-          {name: "Jelle Visser", role: "Gameguru", joindate: new Date("2008-08-01")},
-          {name: "Johan Huijkman", role: "Interaction Engineer", joindate: new Date("2010-01-01")},
-          {name: "Kars Veling", role: "Founder", joindate: new Date("2000-05-01")},
-          {name: "Martin Kool", role: "Crazy inventor", joindate: new Date("2001-04-01")},
-          {name: "Rahul Choudhury", role: "Captain Longhair", joindate: new Date("2006-04-01")},
-          {name: "Richard Lems", role: "Illustrator", joindate: new Date("2011-11-01")},
-          {name: "Sjoerd Visscher", role: "Sjoogle", joindate: new Date("2001-08-01")},
-          {name: "Lukas van Driel", role: "Captain Healthy", joindate: new Date("2005-02-01")}
+        var students = [
+          {name: "Danny de Wit", studentnr: 500618681},
+          {name: "Dennis Tel", studentnr: 500517067},
+          {name: "Donny Oexman", studentnr: 500618824},
+          {name: "Donny Wals", studentnr: 500617634},
+          {name: "Evan Reurekas", studentnr: 500610444},
+          {name: "Geert Beskers", studentnr: 500626558},
+          {name: "Imro Breur", studentnr: 500617963},
+          {name: "Jeroen Hoebe", studentnr: 500531191},
+          {name: "Leon Smit", studentnr: 500622091},
+          {name: "Mark Ootes", studentnr: 500621729},
+          {name: "Martijn van der Woude", studentnr: 500630454},
+          {name: "Mehdi Ebadi", studentnr: 500127613},
+          {name: "Melvin Beemer", studentnr: 500600490},
+          {name: "Paul Bot", studentnr: 500626912},
+          {name: "Pim Meijer", studentnr: 500617245},
+          {name: "Rick van Schalkwijk", studentnr: 500618919},
+          {name: "Robbert van der Steenhoven", studentnr: 500624577},
+          {name: "Stijn van der Vegt", studentnr: 500545938},
+          {name: "Thomas Machielsen", studentnr: 500620602},
+          {name: "Titus Wormer", studentnr: 500625392},
+          {name: "Tjerk Smit", studentnr: 500627708},
+          {name: "Vincent Karsten", studentnr: 500615673},
+          {name: "Wiljan Slofstra", studentnr: 500621743}
         ];
-        _.each(qers, function(item) {
+        _.each(students, function(item) {
           item.plusones = 0;
           item.voters = [];
-          Qers.insert(item);
+          Students.insert(item);
         });
       }
     })

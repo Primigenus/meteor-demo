@@ -1,13 +1,13 @@
 <head>
-  <title>Meteor bedenktijdje</title>
+  <title>Let's learn Meteor</title>
 </head>
 
 <body>
-  {{> qers}}
+  {{> students}}
 </body>
 
-<template name="qers">
-  <h1>Q'ers</h1>
+<template name="students">
+  <h1>Let's learn Meteor!</h1>
   <div class="login">{{loginButtons}}</div>
 
   <table class="sortby-{{sort}}">
@@ -15,27 +15,25 @@
       <tr>
         <th data-sortby="plusones">+1 {{{sortby 'plusones'}}}</th>
         <th data-sortby="name">Naam {{{sortby 'name'}}}</th>
-        <th data-sortby="role">Rol {{{sortby 'role'}}}</th>
-        <th data-sortby="joindate">Gestart {{{sortby 'joindate'}}}</th>
+        <th data-sortby="studentnr">Studentnr {{{sortby 'studentnr'}}}</th>
       </tr>
     </thead>
     <tbody>
-    {{#each qers}}
+    {{#each students}}
       <tr style="{{bgc plusones}}" class="{{selected}}">
         <td class="plusones">
           {{#if currentUser}}
             {{#unless isMe}}
               <a href="#" class="button">+{{plusones}}</a>
-              {{else}}
-                +{{plusones}}
-            {{/unless}}
             {{else}}
               +{{plusones}}
+            {{/unless}}
+          {{else}}
+            +{{plusones}}
           {{/if}}
         </td>
         <th data-col="name">{{name}}</th>
-        <td data-col="role">{{role}}</td>
-        <td>{{formatdate joindate}}</td>
+        <td data-col="studentnr">{{studentnr}}</td>
       </tr>
       {{else}}
       <tr><td colspan="4">No q'ers :(</td></tr>

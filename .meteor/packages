@@ -6,8 +6,7 @@
 autopublish
 insecure
 preserve-inputs
-moment
 accounts-base
 accounts-ui
-accounts-google
 email
+accounts-twitter
