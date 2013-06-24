@@ -2,8 +2,8 @@ var People = new Meteor.Collection("people");
 
 if (Meteor.isClient) {
   Meteor.startup(function() {
-    Session.set("sortby", "name");
-    Session.set("sortdir", 1);
+    Session.setDefault("sortby", "name");
+    Session.setDefault("sortdir", 1);
   });
 
   Template.people.people = function () {

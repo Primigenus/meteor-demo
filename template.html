@@ -26,11 +26,11 @@
           {{#if currentUser}}
             {{#unless isMe}}
               <a href="#" class="button">+{{plusones}}</a>
-              {{else}}
-                +{{plusones}}
-            {{/unless}}
             {{else}}
               +{{plusones}}
+            {{/unless}}
+          {{else}}
+            +{{plusones}}
           {{/if}}
         </td>
         <th data-col="name">{{name}}</th>
