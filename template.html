@@ -3,24 +3,24 @@
 </head>
 
 <body>
-  {{> qers}}
+  {{> people}}
 </body>
 
-<template name="qers">
-  <h1>Q'ers</h1>
+<template name="people">
+  <h1>RSVPs</h1>
   <div class="login">{{loginButtons}}</div>
 
   <table class="sortby-{{sort}}">
     <thead>
       <tr>
         <th data-sortby="plusones">+1 {{{sortby 'plusones'}}}</th>
-        <th data-sortby="name">Naam {{{sortby 'name'}}}</th>
+        <th data-sortby="name">Name {{{sortby 'name'}}}</th>
         <th data-sortby="role">Rol {{{sortby 'role'}}}</th>
-        <th data-sortby="joindate">Gestart {{{sortby 'joindate'}}}</th>
+        <th data-sortby="joindate">Signed up {{{sortby 'joindate'}}}</th>
       </tr>
     </thead>
     <tbody>
-    {{#each qers}}
+    {{#each people}}
       <tr style="{{bgc plusones}}" class="{{selected}}">
         <td class="plusones">
           {{#if currentUser}}
@@ -38,7 +38,7 @@
         <td>{{formatdate joindate}}</td>
       </tr>
       {{else}}
-      <tr><td colspan="4">No q'ers :(</td></tr>
+      <tr><td colspan="4">No one rsvp'd :(</td></tr>
     {{/each}}
     </tbody>
   </table>

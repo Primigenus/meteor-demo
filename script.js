@@ -1,4 +1,4 @@
-var Qers = new Meteor.Collection("qers");
+var People = new Meteor.Collection("people");
 
 if (Meteor.isClient) {
   Meteor.startup(function() {
@@ -6,28 +6,28 @@ if (Meteor.isClient) {
     Session.set("sortdir", 1);
   });
 
-  Template.qers.qers = function () {
+  Template.people.people = function () {
     var sortby = Session.get("sortby");
     var sortdir = Session.get("sortdir");
     var sort = {};
     sort[sortby] = sortdir;
-    return Qers.find({}, {sort: sort});
+    return People.find({}, {sort: sort});
   };
 
-  Template.qers.isMe = function() {
+  Template.people.isMe = function() {
     if (!this.name) return false;
     return this.name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
   }
 
-  Template.qers.sort = function() {
+  Template.people.sort = function() {
     return Session.get("sortby");
   }
 
-  Template.qers.selected = function() {
+  Template.people.selected = function() {
     return Session.equals("selected", this._id) ? "selected" : "";
   }
 
-  Template.qers.events = {
+  Template.people.events = {
     'click .button': function() {
       Meteor.call("plusone", this._id);
     },
@@ -40,7 +40,7 @@ if (Meteor.isClient) {
     }
   }
 
-  Template.qers.sortby = function(col) {
+  Template.people.sortby = function(col) {
     if (Session.equals("sortby", col) && Session.equals("sortdir", 1))
       return "&uarr;"
     else if (Session.equals("sortby", col) && Session.equals("sortdir", -1))
@@ -48,12 +48,12 @@ if (Meteor.isClient) {
     else return "";
   }
 
-  Template.qers.helpers({
+  Template.people.helpers({
     formatdate: function(date) {
       return moment(date).fromNow();
     },
     bgc: function(plusones) {
-      var max = Qers.findOne({}, {sort: {plusones: -1}}).plusones;
+      var max = People.findOne({}, {sort: {plusones: -1}}).plusones;
       max = max || 1;
       plusones = plusones || 0;
       var n = ~~(plusones / max * 100 + 155);
@@ -66,7 +66,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
 
-    Qers.allow({
+    People.allow({
       insert: function() { return true; },
       update: function(userId, docs, fields, modifier) {
         // only allow updates that increment plusones by 1
@@ -76,7 +76,7 @@ if (Meteor.isServer) {
       }
     });
 
-    Qers.find({}).observe({
+    People.find({}).observe({
       changed: function(newDoc, atIndex, oldDoc) {
         if (newDoc.plusones >= 42 && oldDoc.plusones < 42) {
           Email.send({
@@ -91,34 +91,61 @@ if (Meteor.isServer) {
 
     Meteor.methods({
       plusone: function(id) {
-        var record = Qers.findOne(id);
+        var record = People.findOne(id);
         if (_.contains(record.voters, Meteor.user()._id))
           return;
-        Qers.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}});
+        People.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}});
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+/************************/
+/* DEMO UTILITY METHODS */
+/************************/
+
+    const MEETUP_KEY = null;
+
+    Meteor.methods({
+      empty: function() {
+        People.remove({});
       },
       reset: function() {
-        Qers.remove({});
+        People.remove({});
 
-        var qers = [
-          {name: "Chris Waalberg", role: "Planningslaaf", joindate: new Date("2005-04-01")},
-          {name: "Christiaan Hees", role: "Programmeur", joindate: new Date("2008-09-01")},
-          {name: "Elaine Oliver", role: "Interaction Engineer", joindate: new Date("2009-09-01")},
-          {name: "Jelle Visser", role: "Gameguru", joindate: new Date("2008-08-01")},
-          {name: "Johan Huijkman", role: "Interaction Engineer", joindate: new Date("2010-01-01")},
-          {name: "Kars Veling", role: "Founder", joindate: new Date("2000-05-01")},
-          {name: "Martin Kool", role: "Crazy inventor", joindate: new Date("2001-04-01")},
-          {name: "Rahul Choudhury", role: "Captain Longhair", joindate: new Date("2006-04-01")},
-          {name: "Richard Lems", role: "Illustrator", joindate: new Date("2011-11-01")},
-          {name: "Sjoerd Visscher", role: "Sjoogle", joindate: new Date("2001-08-01")},
-          {name: "Lukas van Driel", role: "Captain Healthy", joindate: new Date("2005-02-01")}
-        ];
-        _.each(qers, function(item) {
-          item.plusones = 0;
-          item.voters = [];
-          Qers.insert(item);
+        if (MEETUP_KEY == null) {
+          console.log("Meetup API key has not been defined.");
+          return;
+        }
+
+        var meetupId = 122161962;
+        var response = Meteor.http.get('http://api.meetup.com/2/rsvps?event_id=' + meetupId + '&key=' + MEETUP_KEY);
+        _.each(response.data.results, function(rsvp) {
+          if (rsvp.response == "yes")
+          People.insert({
+            name: rsvp.member.name,
+            plusones: 0,
+            voters: [],
+            role: "",
+            joindate: new Date(rsvp.created)
+          });
         });
       }
-    })
+    });
+
+
+
+
+
 
   });
 }
