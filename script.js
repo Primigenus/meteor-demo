@@ -132,7 +132,7 @@ if (Meteor.isServer) {
         _.each(response.data.results, function(rsvp) {
           if (rsvp.response == "yes")
             People.insert({
-              name: rsvp.member.name,
+              name: rsvp.member.name[0].toUpperCase() + rsvp.member.name.substring(1),
               photo: rsvp.member_photo ? rsvp.member_photo.thumb_link : null,
               plusones: 0,
               voters: [],
