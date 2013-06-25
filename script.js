@@ -1,4 +1,4 @@
-var People = new Meteor.Collection("people");
+People = new Meteor.Collection("people");
 
 if (Meteor.isClient) {
   Meteor.startup(function() {
@@ -16,7 +16,7 @@ if (Meteor.isClient) {
 
   Template.people.isMe = function() {
     if (!this.name) return false;
-    return this.name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
+    return this.name.toLowerCase().indexOf(Meteor.user().profile.name.toLowerCase()) == 0;
   }
 
   Template.people.sort = function() {
@@ -57,7 +57,7 @@ if (Meteor.isClient) {
       max = max || 1;
       plusones = plusones || 0;
       var n = ~~(plusones / max * 100 + 155);
-      var c = [Math.max(0, n - 60),n,Math.max(0, n - 60)].join(",")
+      var c = [Math.max(0, n - 80), n, Math.max(0, n - 80)].join(",")
       return "background: rgb(" + c + ")";
     }
   })
@@ -113,7 +113,7 @@ if (Meteor.isServer) {
 /* DEMO UTILITY METHODS */
 /************************/
 
-    const MEETUP_KEY = null;
+    const MEETUP_KEY = "175661d185569741e2847533e6b602e";
 
     Meteor.methods({
       empty: function() {
@@ -131,13 +131,14 @@ if (Meteor.isServer) {
         var response = Meteor.http.get('http://api.meetup.com/2/rsvps?event_id=' + meetupId + '&key=' + MEETUP_KEY);
         _.each(response.data.results, function(rsvp) {
           if (rsvp.response == "yes")
-          People.insert({
-            name: rsvp.member.name,
-            plusones: 0,
-            voters: [],
-            role: "",
-            joindate: new Date(rsvp.created)
-          });
+            People.insert({
+              name: rsvp.member.name,
+              photo: rsvp.member_photo ? rsvp.member_photo.thumb_link : null,
+              plusones: 0,
+              voters: [],
+              guests: rsvp.guests,
+              joindate: new Date(rsvp.created)
+            });
         });
       }
     });
