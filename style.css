@@ -26,10 +26,11 @@ th, td { padding: 10px; }
 
 .login { position: absolute; top: 0; right: 0; }
 
-.plusones { text-align: right;}
+.plusones { text-align: center;}
 
-th img {
-  float: right;
+.photo { text-align: center;}
+
+td img {
   height: 30px;
   vertical-align: middle;
 }
@@ -51,11 +52,17 @@ td a:hover {
 td a:active {
   background: #ccc -webkit-linear-gradient(bottom, #ccc, #999);
 }
+td a.disabled {
+  background: transparent;
+  color: gray;
+  cursor: default;
+  border: none;
+}
 
 .sortby-plusones thead th:nth-child(1),
 .sortby-name thead th:nth-child(2),
 .sortby-guests thead th:nth-child(3),
-.sortby-joindate thead th:nth-child(4)
+.sortby-lastvote thead th:nth-child(4)
 { background: #ddd;}
 
 tr.selected { outline: solid 5px #000; background-color: #ff9 !important;}
