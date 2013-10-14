@@ -131,7 +131,7 @@ if (Meteor.isServer) {
     // Allow all inserts
     insert: function() { return true; },
 
-    // only allow updates that increment plusones by 1
+    // only allow updates that increment plusones by 1 and disallow upvoting yourself
     update: function(userId, docs, fields, modifier) {
       var isMe = docs[0].name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
       var isPlusOne = _.keys(modifier).length == 1 && modifier["$inc"] && modifier["$inc"].plusones == 1;
