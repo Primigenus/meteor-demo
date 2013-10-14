@@ -4,9 +4,13 @@
 /************************/
 
 People = new Meteor.Collection("people");
-/*q42nl = DDP.connect("http://q42.nl");
+
+// Enable to pull in data from q42.nl instead of local
+/*
+q42nl = DDP.connect("http://q42.nl");
 People = new Meteor.Collection("Employees", q42nl);
-q42nl.subscribe("employees");*/
+q42nl.subscribe("employees");
+*/
 
 
 
@@ -15,11 +19,14 @@ q42nl.subscribe("employees");*/
 /************************/
 
 if (Meteor.isClient) {
+
+  // Set some default session values when starting up
   Meteor.startup(function() {
     Session.setDefault("sortby", "name");
     Session.setDefault("sortdir", 1);
   });
 
+  // The list of people, which can be sorted depending on session values
   Template.people.people = function () {
     var sortby = Session.get("sortby");
     var sortdir = Session.get("sortdir");
@@ -28,6 +35,7 @@ if (Meteor.isClient) {
     return People.find({}, {sort: sort});
   }
 
+  // How many people there are
   Template.people.numberPeople = function() {
     return People.find().count();
   }
@@ -159,7 +167,7 @@ if (Meteor.isServer) {
       People.remove({});
 
       var people = [
-        "Rahul", "Jeroen", "Klaas"
+        "Aidan Mauricio","Ande Oey","Anouk Rentier","Arthur Mooiman","Aurel Bansagi","Bart Heemskerk","Boris Matthijssen","Bram Janssens","Carel Wagenaar","Casper van der Hout","Chantal Olieman","Charles","Daan Schipper","Daniel","Davey Struijk","Dennis van Peer","Emiel Rietdijk","Erik meulman","Ervan","Eva Anker","Eveline","Felix van Doorn","Floris Verburg","Gijs Wterings","Giovan Angela","Herman","Hugo Platell","Ike Rijsdijk","Jaap Heijligers","Jan van Rosmalen","Jasper Nieuwdorp","Jeffrey de Lange","Jenny Tjan","Jesper Peterse","Jesse Slim","Jorien Knipping","Kaper Kooijman","Lars Heijenrath","Le Chau Lu","Lindy koel","Lindy","Lisann Spek","Louis Sikkes","Luuk Frankena","Maarten Flikkema","Marjolein Bouwmeester","Martijn Dwars","Martijn Steenbergen","Martijn","Mathieu Post","Matthijs Verzijl","Matthijs van Dorth","Milen van Osch","Noor van Ruyven","Nordin van Nes","Pascal Remeijsen","Patricia van Marlen","Paul Verkooijen","Piet de Vaere","Renee Swinkels","Rick Wieman","Rik Nijessen","Rob van den Berg","Robert Jan Schlimbach","Roderick Schravendeel","Rolf Rengers","Roy Graafmans","Ruben Starmans","Rutger Rauws","Ruth Koole","Sander Ploegsma","Sander van den Oever","Saskia Vertregt","Sjoerd Jansma","Sjors Kole","Stephan dumasy","Sven Popping","Sven","Tessa van Hartingsveldt","Thomas Smith","Thomas Uitdewillegen","Tim van der Lippe","Tom Brouws","Tom Harting","Tom Runia","Vincent van der Eijk","Wessel","Wouter Posdijk","gijs bruining","inez","lianne bruijns","lindy"
       ];
 
       _.each(people, function(person) {
