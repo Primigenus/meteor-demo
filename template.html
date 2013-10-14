@@ -1,5 +1,5 @@
 <head>
-  <title>Let's Learn Meteor!</title>
+  <title>Meteor Demo</title>
 </head>
 
 <body>
@@ -7,7 +7,7 @@
 </body>
 
 <template name="people">
-  <h1>RSVPs</h1>
+  <h1>People ({{numberPeople}})</h1>
   <div class="login">{{loginButtons}}</div>
 
   <table class="sortby-{{sort}}">
@@ -15,8 +15,7 @@
       <tr>
         <th data-sortby="plusones">+1 {{{sortby 'plusones'}}}</th>
         <th data-sortby="name">Name {{{sortby 'name'}}}</th>
-        <th data-sortby="guests">Guests {{{sortby 'guests'}}}</th>
-        <th data-sortby="joindate">Signed up {{{sortby 'joindate'}}}</th>
+        <th data-sortby="lastvote">Last vote {{{sortby 'lastvote'}}}</th>
       </tr>
     </thead>
     <tbody>
@@ -25,7 +24,7 @@
         <td class="plusones">
           {{#if currentUser}}
             {{#unless isMe}}
-              <a href="#" class="button">+{{plusones}}</a>
+              <a href="#" class="button{{disabled}}">+{{plusones}}</a>
             {{else}}
               +{{plusones}}
             {{/unless}}
@@ -33,12 +32,11 @@
             +{{plusones}}
           {{/if}}
         </td>
-        <th data-col="name">{{#if photo}}<img src="{{photo}}" alt="">{{/if}} {{name}}</th>
-        <td data-col="guests">{{guests}}</td>
-        <td>{{formatdate joindate}}</td>
+        <th data-col="name">{{name}}</th>
+        <td>{{lastvote}}</td>
       </tr>
       {{else}}
-      <tr><td colspan="4">No one rsvp'd :(</td></tr>
+      <tr><td colspan="4">No people found :(</td></tr>
     {{/each}}
     </tbody>
   </table>

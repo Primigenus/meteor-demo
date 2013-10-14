@@ -1,4 +1,18 @@
+
+/************************/
+/* ANYWHERE             */
+/************************/
+
 People = new Meteor.Collection("people");
+/*q42nl = DDP.connect("http://q42.nl");
+People = new Meteor.Collection("Employees", q42nl);
+q42nl.subscribe("employees");*/
+
+
+
+/************************/
+/* CLIENT               */
+/************************/
 
 if (Meteor.isClient) {
   Meteor.startup(function() {
@@ -12,11 +26,23 @@ if (Meteor.isClient) {
     var sort = {};
     sort[sortby] = sortdir;
     return People.find({}, {sort: sort});
-  };
+  }
+
+  Template.people.numberPeople = function() {
+    return People.find().count();
+  }
+
+  Template.people.plusones = function() {
+    return this.plusones || 0;
+  }
 
   Template.people.isMe = function() {
     if (!this.name) return false;
     return this.name.toLowerCase().indexOf(Meteor.user().profile.name.toLowerCase()) == 0;
+  }
+
+  Template.people.disabled = function() {
+    return _.contains(this.voters, Meteor.user()._id) ? " disabled" : "";
   }
 
   Template.people.sort = function() {
@@ -25,6 +51,12 @@ if (Meteor.isClient) {
 
   Template.people.selected = function() {
     return Session.equals("selected", this._id) ? "selected" : "";
+  }
+
+  Template.people.lastvote = function() {
+    if (this.lastvote)
+      return moment(this.lastvote).fromNow();
+    return "never";
   }
 
   Template.people.events = {
@@ -50,7 +82,8 @@ if (Meteor.isClient) {
 
   Template.people.helpers({
     formatdate: function(date) {
-      return moment(date).fromNow();
+      if (date)
+        return moment(date).fromNow();
     },
     bgc: function(plusones) {
       var max = People.findOne({}, {sort: {plusones: -1}}).plusones;
@@ -63,40 +96,45 @@ if (Meteor.isClient) {
   })
 }
 
+
+
+/************************/
+/* SERVER               */
+/************************/
+
 if (Meteor.isServer) {
-  Meteor.startup(function () {
 
-    People.allow({
-      insert: function() { return true; },
-      update: function(userId, docs, fields, modifier) {
-        // only allow updates that increment plusones by 1
-        var isMe = docs[0].name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
-        var isPlusOne = _.keys(modifier).length == 1 && modifier["$inc"] && modifier["$inc"].plusones == 1;
-        return isPlusOne && !isMe;
-      }
-    });
+  People.allow({
+    insert: function() { return true; },
+    update: function(userId, docs, fields, modifier) {
+      // only allow updates that increment plusones by 1
+      var isMe = docs[0].name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
+      var isPlusOne = _.keys(modifier).length == 1 && modifier["$inc"] && modifier["$inc"].plusones == 1;
+      return isPlusOne && !isMe;
+    }
+  });
 
-    People.find({}).observe({
-      changed: function(newDoc, atIndex, oldDoc) {
-        if (newDoc.plusones >= 42 && oldDoc.plusones < 42) {
-          Email.send({
-            to: "rahul@q42.nl",
-            from: "rahul@q42.nl",
-            subject: "Iemand heeft +42 bereikt!",
-            text: newDoc.name + " heeft +42 gescoord met het Meteor bedenktijdje! W000000t"
-          });
-        }
+  People.find({}).observe({
+    changed: function(newDoc, atIndex, oldDoc) {
+      if (newDoc.plusones >= 42 && oldDoc.plusones < 42) {
+        Email.send({
+          to: "rahul@q42.nl",
+          from: "rahul@q42.nl",
+          subject: "Someone reached +42!",
+          text: newDoc.name + " reached +42 votes in the Meteor Demo! W000000t"
+        });
       }
-    });
+    }
+  });
 
-    Meteor.methods({
-      plusone: function(id) {
-        var record = People.findOne(id);
-        if (_.contains(record.voters, Meteor.user()._id))
-          return;
-        People.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}});
-      }
-    });
+  Meteor.methods({
+    plusone: function(id) {
+      var record = People.findOne(id);
+      if (_.contains(record.voters, Meteor.user()._id))
+        return;
+      People.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}, $set: {lastvote: new Date()}});
+    }
+  });
 
 
 
@@ -113,40 +151,29 @@ if (Meteor.isServer) {
 /* DEMO UTILITY METHODS */
 /************************/
 
-    const MEETUP_KEY = "175661d185569741e2847533e6b602e";
+  Meteor.methods({
+    empty: function() {
+      People.remove({});
+    },
+    reset: function() {
+      People.remove({});
 
-    Meteor.methods({
-      empty: function() {
-        People.remove({});
-      },
-      reset: function() {
-        People.remove({});
+      var people = [
+        "Rahul", "Jeroen", "Klaas"
+      ];
 
-        if (MEETUP_KEY == null) {
-          console.log("Meetup API key has not been defined.");
-          return;
-        }
-
-        var meetupId = 122161962;
-        var response = Meteor.http.get('http://api.meetup.com/2/rsvps?event_id=' + meetupId + '&key=' + MEETUP_KEY);
-        _.each(response.data.results, function(rsvp) {
-          if (rsvp.response == "yes")
-            People.insert({
-              name: rsvp.member.name[0].toUpperCase() + rsvp.member.name.substring(1),
-              photo: rsvp.member_photo ? rsvp.member_photo.thumb_link : null,
-              plusones: 0,
-              voters: [],
-              guests: rsvp.guests,
-              joindate: new Date(rsvp.created)
-            });
-        });
-      }
-    });
-
-
-
-
-
-
+      _.each(people, function(person) {
+          People.insert({
+            name: person,
+            plusones: 0,
+            voters: []
+          });
+      });
+    }
   });
+
+
+
+
+
 }
