@@ -74,7 +74,7 @@ if (Meteor.isClient) {
   }
 
   // Define some events for the people template
-  Template.people.events = {
+  Template.people.events({
     'click .button': function() {
       // Call the server method "plusone" with the current person's id when we click the +1 button
       Meteor.call("plusone", this._id);
@@ -88,7 +88,7 @@ if (Meteor.isClient) {
       Session.set("sortby", evt.target.getAttribute("data-sortby"));
       Session.set("sortdir", Session.get("sortdir") * -1);
     }
-  }
+  });
 
   // Draw an arrow up or down depending on whether and how we're sorting this column
   Template.people.sortby = function(col) {
@@ -189,18 +189,56 @@ if (Meteor.isServer) {
 
       // Prefill the database with people who signed up for this talk :)
       var people = [
-        "Aidan Mauricio","Ande Oey","Anouk Rentier","Arthur Mooiman","Aurel Bansagi","Bart Heemskerk","Boris Matthijssen",
-        "Bram Janssens","Carel Wagenaar","Casper van der Hout","Chantal Olieman","Charles","Daan Schipper","Daniel","Davey Struijk",
-        "Dennis van Peer","Emiel Rietdijk","Erik meulman","Ervan","Eva Anker","Eveline","Felix van Doorn","Floris Verburg","Gijs Wterings",
-        "Giovan Angela","Herman","Hugo Platell","Ike Rijsdijk","Jaap Heijligers","Jan van Rosmalen","Jasper Nieuwdorp","Jeffrey de Lange",
-        "Jenny Tjan","Jesper Peterse","Jesse Slim","Jorien Knipping","Kaper Kooijman","Lars Heijenrath","Le Chau Lu","Lindy koel","Lindy",
-        "Lisann Spek","Louis Sikkes","Luuk Frankena","Maarten Flikkema","Marjolein Bouwmeester","Martijn Dwars","Martijn Steenbergen","Martijn",
-        "Mathieu Post","Matthijs Verzijl","Matthijs van Dorth","Milen van Osch","Noor van Ruyven","Nordin van Nes","Pascal Remeijsen",
-        "Patricia van Marlen","Paul Verkooijen","Piet de Vaere","Renee Swinkels","Rick Wieman","Rik Nijessen","Rob van den Berg",
-        "Robert Jan Schlimbach","Roderick Schravendeel","Rolf Rengers","Roy Graafmans","Ruben Starmans","Rutger Rauws","Ruth Koole",
-        "Sander Ploegsma","Sander van den Oever","Saskia Vertregt","Sjoerd Jansma","Sjors Kole","Stephan dumasy","Sven Popping","Sven",
-        "Tessa van Hartingsveldt","Thomas Smith","Thomas Uitdewillegen","Tim van der Lippe","Tom Brouws","Tom Harting","Tom Runia",
-        "Vincent van der Eijk","Wessel","Wouter Posdijk","gijs bruining","inez","lianne bruijns","lindy"
+        "Alex Shepko",
+        "Alexander Meesters",
+        "Ali Sahin",
+        "Anand Graves",
+        "André Gonçalves",
+        "arnoud",
+        "Besma Mcharek-Boussif",
+        "Bob van Oorschot",
+        "Boite Witte",
+        "Charif Mews",
+        "chris",
+        "Christine",
+        "danny sukdeo",
+        "Dave van Soest",
+        "David Spreekmeester",
+        "David van der Does",
+        "Dorien",
+        "Erik Pragt",
+        "Filip Van Harreveld",
+        "George Jinga",
+        "Guido Bouman",
+        "Harmen",
+        "Henk Gescher",
+        "Jaroslav",
+        "Jiro Ghianni",
+        "João Carmona",
+        "Kah Tang",
+        "Karen Sijbrandij",
+        "Koen van der Keijl",
+        "Leo van Snippenburg",
+        "Lon Boonen",
+        "Maarten",
+        "Marco de Jongh",
+        "Mark Hendriks",
+        "Martijn Brekelmans",
+        "Martijn laarman",
+        "Meindert Hart",
+        "Michiel Grootegoed",
+        "Michiel ter Reehorst",
+        "Nicolas",
+        "NooitAf",
+        "Rahul Choudhury",
+        "Remco Veldkamp",
+        "Richard Japenga",
+        "Rien Daamen",
+        "Robbert",
+        "Robin Reekers",
+        "Thomas Goijarts",
+        "Tim",
+        "Óli Óskarsson"
       ];
 
       _.each(people, function(person) {
