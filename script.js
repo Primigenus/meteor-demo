@@ -3,7 +3,7 @@
 /* ANYWHERE             */
 /************************/
 
-People = new Meteor.Collection("people");
+People = new Mongo.Collection("people");
 
 // Enable to pull in data from q42.nl instead of local
 /*
@@ -26,52 +26,81 @@ if (Meteor.isClient) {
     Session.setDefault("sortdir", 1);
   });
 
-  // The list of people, which can be sorted depending on session values
-  Template.people.people = function () {
-    var sortby = Session.get("sortby");
-    var sortdir = Session.get("sortdir");
-    var sort = {};
-    sort[sortby] = sortdir;
-    return People.find({}, {sort: sort});
-  }
+  Template.people.helpers({
 
-  // How many people there are
-  Template.people.numberPeople = function() {
-    return People.find().count();
-  }
+    // The list of people, which can be sorted depending on session values
+    people: function() {
+      var sortby = Session.get("sortby");
+      var sortdir = Session.get("sortdir");
+      var sort = {};
+      sort[sortby] = sortdir;
+      return People.find({}, {sort: sort});
+    },
 
-  // Show the current plusones or zero if the property doesn't exist
-  Template.people.plusones = function() {
-    return this.plusones || 0;
-  }
+    // How many people there are
+    numberPeople: function() {
+      return People.find().count();
+    },
 
-  // Hacky check to determine whether this item is the same as the currently logged in user
-  Template.people.isMe = function() {
-    if (!this.name) return false;
-    return this.name.toLowerCase().indexOf(Meteor.user().profile.name.toLowerCase()) == 0;
-  }
+    // Show the current plusones or zero if the property doesn't exist
+    plusones: function() {
+      return this.plusones || 0;
+    },
 
-  // Whether to disable the +1 button if the current user already voted for that person
-  Template.people.disabled = function() {
-    return _.contains(this.voters, Meteor.user()._id) ? " disabled" : "";
-  }
+    // Hacky check to determine whether this item is the same as the currently logged in user
+    isMe: function() {
+      if (!this.name) return false;
+      return this.name.toLowerCase().indexOf(Meteor.user().profile.name.toLowerCase()) == 0;
+    },
 
-  // The currently sorted column
-  Template.people.sort = function() {
-    return Session.get("sortby");
-  }
+    // Whether to disable the +1 button if the current user already voted for that person
+    disabled: function() {
+      return _.contains(this.voters, Meteor.user()._id) ? " disabled" : "";
+    },
 
-  // Whether the current item is selected or not
-  Template.people.selected = function() {
-    return Session.equals("selected", this._id) ? "selected" : "";
-  }
+    // The currently sorted column
+    sort: function() {
+      return Session.get("sortby");
+    },
 
-  // Format a date to display when the last vote was added for this person
-  Template.people.lastvote = function() {
-    if (this.lastvote)
-      return moment(this.lastvote).fromNow();
-    return "never";
-  }
+    // Whether the current item is selected or not
+    selected: function() {
+      return Session.equals("selected", this._id) ? "selected" : "";
+    },
+
+    // Format a date to display when the last vote was added for this person
+    lastvote: function() {
+      if (this.lastvote)
+        return moment(this.lastvote).fromNow();
+      return "never";
+    },
+
+    // Draw an arrow up or down depending on whether and how we're sorting this column
+    sortby: function(col) {
+      if (Session.equals("sortby", col) && Session.equals("sortdir", 1))
+        return "&uarr;"
+      else if (Session.equals("sortby", col) && Session.equals("sortdir", -1))
+        return "&darr;";
+      else return "";
+    },
+
+    // Format a date using the moment.js library
+    formatdate: function(date) {
+      if (date)
+        return moment(date).fromNow();
+    },
+
+    // Generate a shade of green depending on how many votes the maximum upvoted user has
+    bgc: function(plusones) {
+      var max = People.findOne({}, {sort: {plusones: -1}}).plusones;
+      max = max || 1;
+      plusones = plusones || 0;
+      var n = ~~(plusones / max * 100 + 155);
+      var c = [Math.max(0, n - 80), n, Math.max(0, n - 80)].join(",")
+      return "background: rgb(" + c + ")";
+    }
+
+  });
 
   // Define some events for the people template
   Template.people.events({
@@ -89,33 +118,7 @@ if (Meteor.isClient) {
       Session.set("sortdir", Session.get("sortdir") * -1);
     }
   });
-
-  // Draw an arrow up or down depending on whether and how we're sorting this column
-  Template.people.sortby = function(col) {
-    if (Session.equals("sortby", col) && Session.equals("sortdir", 1))
-      return "&uarr;"
-    else if (Session.equals("sortby", col) && Session.equals("sortdir", -1))
-      return "&darr;";
-    else return "";
-  }
-
-  // Create some helpers to use in the template
-  Template.people.helpers({
-    // Format a date using the moment.js library
-    formatdate: function(date) {
-      if (date)
-        return moment(date).fromNow();
-    },
-    // Generate a shade of green depending on how many votes the maximum upvoted user has
-    bgc: function(plusones) {
-      var max = People.findOne({}, {sort: {plusones: -1}}).plusones;
-      max = max || 1;
-      plusones = plusones || 0;
-      var n = ~~(plusones / max * 100 + 155);
-      var c = [Math.max(0, n - 80), n, Math.max(0, n - 80)].join(",")
-      return "background: rgb(" + c + ")";
-    }
-  })
+  
 }
 
 
