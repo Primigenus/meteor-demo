@@ -28,7 +28,8 @@ if (Meteor.isClient) {
 
   Template.people.helpers({
 
-    // The list of people, which can be sorted depending on session values
+    // The list of people, which can be sorted depending
+    // on session values
     people: function() {
       var sortby = Session.get("sortby");
       var sortdir = Session.get("sortdir");
@@ -42,20 +43,25 @@ if (Meteor.isClient) {
       return People.find().count();
     },
 
-    // Show the current plusones or zero if the property doesn't exist
+    // Show the current plusones or zero if the property
+    // doesn't exist
     plusones: function() {
       return this.plusones || 0;
     },
 
-    // Hacky check to determine whether this item is the same as the currently logged in user
+    // Hacky check to determine whether this item is the same
+    // as the currently logged in user
     isMe: function() {
       if (!this.name) return false;
-      return this.name.toLowerCase().indexOf(Meteor.user().profile.name.toLowerCase()) == 0;
+      return this.name.toLowerCase().indexOf(
+        Meteor.user().profile.name.toLowerCase()) == 0;
     },
 
-    // Whether to disable the +1 button if the current user already voted for that person
+    // Whether to disable the +1 button if the current user
+    // already voted for that person
     disabled: function() {
-      return _.contains(this.voters, Meteor.user()._id) ? " disabled" : "";
+      return _.contains(this.voters, Meteor.user()._id)
+        ? " disabled" : "";
     },
 
     // The currently sorted column
@@ -65,21 +71,26 @@ if (Meteor.isClient) {
 
     // Whether the current item is selected or not
     selected: function() {
-      return Session.equals("selected", this._id) ? "selected" : "";
+      return Session.equals("selected", this._id)
+        ? "selected" : "";
     },
 
-    // Format a date to display when the last vote was added for this person
+    // Format a date to display when the last vote was added
+    // for this person
     lastvote: function() {
       if (this.lastvote)
         return moment(this.lastvote).fromNow();
       return "never";
     },
 
-    // Draw an arrow up or down depending on whether and how we're sorting this column
+    // Draw an arrow up or down depending on whether and how
+    // we're sorting this column
     sortby: function(col) {
-      if (Session.equals("sortby", col) && Session.equals("sortdir", 1))
+      if (Session.equals("sortby", col) && 
+        Session.equals("sortdir", 1))
         return "&uarr;"
-      else if (Session.equals("sortby", col) && Session.equals("sortdir", -1))
+      else if (Session.equals("sortby", col) && 
+        Session.equals("sortdir", -1))
         return "&darr;";
       else return "";
     },
@@ -90,13 +101,16 @@ if (Meteor.isClient) {
         return moment(date).fromNow();
     },
 
-    // Generate a shade of green depending on how many votes the maximum upvoted user has
+    // Generate a shade of green depending on how many votes
+    // the maximum upvoted user has
     bgc: function(plusones) {
-      var max = People.findOne({}, {sort: {plusones: -1}}).plusones;
+      var max = People.findOne({}, {sort: {plusones: -1}})
+        .plusones;
       max = max || 1;
       plusones = plusones || 0;
       var n = ~~(plusones / max * 100 + 155);
-      var c = [Math.max(0, n - 80), n, Math.max(0, n - 80)].join(",")
+      var c = [Math.max(0, n - 80), n, Math.max(0, n - 80)]
+        .join(",")
       return "background: rgb(" + c + ")";
     }
 
@@ -105,7 +119,8 @@ if (Meteor.isClient) {
   // Define some events for the people template
   Template.people.events({
     'click .button': function() {
-      // Call the server method "plusone" with the current person's id when we click the +1 button
+      // Call the server method "plusone" with the current
+      // person's id when we click the +1 button
       Meteor.call("plusone", this._id);
     },
     'click tbody tr': function() {
@@ -113,8 +128,10 @@ if (Meteor.isClient) {
       Session.set('selected', this._id);
     },
     'click thead th': function(evt) {
-      // Sort by the column we just clicked, or reverse the sort order if already sorting by it
-      Session.set("sortby", evt.target.getAttribute("data-sortby"));
+      // Sort by the column we just clicked, or reverse the
+      // sort order if already sorting by it
+      Session.set("sortby",
+        evt.target.getAttribute("data-sortby"));
       Session.set("sortdir", Session.get("sortdir") * -1);
     }
   });
@@ -134,24 +151,30 @@ if (Meteor.isServer) {
     // Allow all inserts
     insert: function() { return true; },
 
-    // only allow updates that increment plusones by 1 and disallow upvoting yourself
+    // only allow updates that increment plusones by 1 and
+    // disallow upvoting yourself
     update: function(userId, docs, fields, modifier) {
-      var isMe = docs[0].name.toLowerCase() === Meteor.user().profile.name.toLowerCase();
-      var isPlusOne = _.keys(modifier).length == 1 && modifier["$inc"] && modifier["$inc"].plusones == 1;
+      var isMe = docs[0].name.toLowerCase() === 
+        Meteor.user().profile.name.toLowerCase();
+      var isPlusOne = _.keys(modifier).length == 1
+        && modifier["$inc"] && modifier["$inc"].plusones == 1;
       return isPlusOne && !isMe;
     }
   });
 
-  // Watch the People collection and act if a change matches our observer
+  // Watch the People collection and act if a change matches
+  // our observer
   People.find({}).observe({
     changed: function(newDoc, atIndex, oldDoc) {
-      // If a person is upvoted beyond 42 upvotes, send Rahul an email :)
+      // If a person is upvoted beyond 42 upvotes, send Rahul
+      // an email :)
       if (newDoc.plusones >= 42 && oldDoc.plusones < 42) {
         Email.send({
           to: "rahul@q42.nl",
           from: "rahul@q42.nl",
           subject: "Someone reached +42!",
-          text: newDoc.name + " reached +42 votes in the Meteor Demo! W000000t"
+          text: newDoc.name +
+            " reached +42 votes in the Meteor Demo! W000000t"
         });
       }
     }
@@ -159,12 +182,17 @@ if (Meteor.isServer) {
 
   // Define some API methods that the client can use
   Meteor.methods({
-    // Plusone a person by ID. Doesn't do anything if the current user already voted for this person.
+    // Plusone a person by ID. Doesn't do anything if the
+    // current user already voted for this person.
     plusone: function(id) {
       var record = People.findOne(id);
       if (_.contains(record.voters, Meteor.user()._id))
         return;
-      People.update(id, {$inc: {plusones: 1}, $addToSet: {voters: Meteor.user()._id}, $set: {lastvote: new Date()}});
+      People.update(id, {
+        $inc: {plusones: 1},
+        $addToSet: {voters: Meteor.user()._id},
+        $set: {lastvote: new Date()}
+      });
     }
   });
 
