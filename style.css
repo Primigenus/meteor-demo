@@ -1,3 +1,7 @@
+* {
+  -webkit-transition: ease .2s;
+}
+
 body {
   position: relative;
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
