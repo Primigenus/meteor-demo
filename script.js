@@ -95,12 +95,6 @@ if (Meteor.isClient) {
       else return "";
     },
 
-    // Format a date using the moment.js library
-    formatdate: function(date) {
-      if (date)
-        return moment(date).fromNow();
-    },
-
     // Generate a shade of green depending on how many votes
     // the maximum upvoted user has
     bgc: function(plusones) {
