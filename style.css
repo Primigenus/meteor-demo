@@ -39,7 +39,7 @@ td img {
   vertical-align: middle;
 }
 
-td a {
+button {
   display: block;
   -webkit-user-select: none;
   border-radius: 10px;
@@ -48,15 +48,16 @@ td a {
   color: #666;
   padding: 3px 6px;
   text-align: center;
+  cursor: pointer;
 }
-td a:hover {
+button:hover {
   border-color: #666;
   background: #ccc -webkit-linear-gradient(top, #ccc, #999);
 }
-td a:active {
+button:active {
   background: #ccc -webkit-linear-gradient(bottom, #ccc, #999);
 }
-td a.disabled {
+button.disabled {
   background: transparent;
   color: gray;
   cursor: default;
