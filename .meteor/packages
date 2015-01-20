@@ -9,6 +9,5 @@ accounts-base
 accounts-ui
 email
 accounts-twitter
-standard-app-packages
-mrt:moment
-
+meteor-platform
+momentjs:moment
