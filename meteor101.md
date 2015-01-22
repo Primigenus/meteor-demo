@@ -224,6 +224,13 @@ than a list of steps you have to follow manually.
 
 ---
 
+# This talk on Github
+
+## [github.com/primigenus/meteor-demo](http://github.com/primigenus/meteor-demo)
+### (`mtvjs` branch)
+
+---
+
 # Thanks!
 
 ## [@rahul](http://twitter.com/rahul), [q42.com](http://q42.com)
