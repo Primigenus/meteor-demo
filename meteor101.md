@@ -53,8 +53,13 @@ Who among you have already built something with Meteor?
 
 ---
 
-# Who makes Meteor?
-## [meteor.com](http://meteor.com)
+> Writing software is too hard and it takes too long.
+-- [meteor.com/about](https://www.meteor.com/about)
+
+^The team at Meteor Development Group realised that companies like Google, Facebook
+and Asana have the resources to build expansive reactive frameworks to power
+their products, but that regular folks don't have access to them, so they set out
+to do just that.
 
 ^Meteor is an open source project backed by a startup based in San Francisco.
 This is different than most open source projects, which are usually done in
@@ -62,26 +67,13 @@ someone's spare time, or part of a large tech company.
 
 ---
 
-# Why make Meteor?
-
-^The team at Meteor Development Group realised that companies like Google, Facebook
-and Asana have the resources to build expansive reactive frameworks to power
-their products, but that regular folks don't have access to them, so they set out
-to do just that.
-
----
-
-# Status quo
+![fit](clientserverdb1.png)
 
 ^To get a sense of what Meteor is trying to achieve, let's take a look at
 the status quo.
 
 ^We'll move on to the demo shortly, but you should understand the design goals
 first.
-
----
-
-![fit](clientserverdb1.png)
 
 ^Most apps today have this separation of client, server and database.
 Three different technology layers, often using different languages, frameworks
@@ -99,19 +91,11 @@ you should build software. Let's take a look at how.
 
 ---
 
-# Principles & buzzwords (1)
-
-- Less code with reactive programming
-- One language everywhere with isomorphic APIs
-- Hot deploys
+# One language everywhere<br>with an isomorphic API
 
 ---
 
-# Principles & buzzwords (2)
-
-- Ultra responsiveness with latency compensation
-- Unified "isopackage" ecosystem
-- Live updates
+# Unified "isopackage" ecosystem
 
 ^So Meteor comes with a bunch of buzzwords :) but they all relate back to
 these original principles that the team at Meteor believes in.
@@ -130,20 +114,6 @@ client and server code and even their own database.
 
 ^And the current hip thing, live updates. But live updates with Meteor are
 dramatically simpler to implement than any other platform, which leads me to...
-
----
-
-# The One True Principle
-## Ease of Use
-
-^In my opinion, the biggest value Meteor brings is a revolutionary simplification
-of programming. It achieves this by rethinking a lot of stuff we thought had
-already been solved. It takes a little while to grok completely, but once it
-clicks, you feel like you've been transported to the future and can't go back. :)
-
-^Ease of use means Meteor is easier to get into, but also that you create fewer
-bugs just by virtue of the way the platform is built. In this way it reminds me
-of functional programming.
 
 ---
 
@@ -167,7 +137,8 @@ than a list of steps you have to follow manually.
 
 # A look at the Meteor stack
 
-- [Blaze](http://meteor.github.io/blaze/) reactive virtual DOM engine
+- [Blaze](http://meteor.github.io/blaze/): virtual DOM engine
+- Tracker: reactive programming library
 - Live data & client side MongoDB
 - DDP
 
@@ -186,16 +157,15 @@ than a list of steps you have to follow manually.
   - Vote people up
 - Sign in with Google
   - Limit voting to signed in
-  - No voting for yourself
 
 ---
 
 # Stuff to do next
 
 ---
-# Set up discrete pub/sub instead of autopublish
+# Set up discrete pub/sub<br>instead of autopublish
 ---
-# Use allow/deny rules for security (and remove insecure)
+# Use allow/deny rules for security (and remove `insecure`)
 ---
 # Publish to Android/iOS
 - `meteor install-sdk android`  
@@ -209,7 +179,7 @@ than a list of steps you have to follow manually.
 
 ---
 
-# Write some reactive integration tests
+# Write some reactive<br>integration tests
 ## [velocity.meteor.com](http://velocity.meteor.com)
 
 ---
@@ -221,13 +191,14 @@ than a list of steps you have to follow manually.
 - [discovermeteor.com](http://disovermeteor.com) book - build a HN clone
 - [bulletproofmeteor.com](http://bulletproofmeteor.com) advanced Meteor book
 - [atmosphere](http://atmospherejs.com) package directory
+- [forums.meteor.com](http://forums.meteor.com) community
 
 ---
 
 # This talk on Github
 
 ## [github.com/primigenus/meteor-demo](http://github.com/primigenus/meteor-demo)
-### (`mtvjs` branch)
+### (`southbayjs` branch)
 
 ---
 
